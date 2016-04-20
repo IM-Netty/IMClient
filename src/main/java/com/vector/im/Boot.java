@@ -18,16 +18,6 @@ public class Boot extends Thread implements SignalHandler {
 
     private void boot() {
         App.instance().create();
-
-        Runtime.getRuntime().addShutdownHook(this);
-        Signal sigTERM = new Signal("TERM");/* 注册KILL信号 */
-        Signal sigINT = new Signal("INT");/* 注册CTRL+C信号 */
-        Signal.handle(sigTERM, this);
-        Signal.handle(sigINT, this);
-    }
-
-    @Override
-    public void run() {
     }
 
     @Override

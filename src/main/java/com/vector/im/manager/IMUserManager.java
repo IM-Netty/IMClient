@@ -1,6 +1,7 @@
 package com.vector.im.manager;
 
 import com.vector.im.im.IMClient;
+import com.vector.im.im.ThreadSocket;
 
 import io.netty.buffer.ByteBuf;
 
@@ -12,7 +13,7 @@ public class IMUserManager {
 
     public static void receiveUserInfo(ByteBuf body){
         int id = body.readInt();
-        IMClient.instance().setId(id);
+        IMClient.instance().setUserId(id);
         System.out.println("登陆成功，用户Id 为 "+id);
         IMTestManager.testReq("Test 通过");
     }

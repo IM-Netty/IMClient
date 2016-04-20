@@ -1,6 +1,6 @@
 package com.vector.im.app;
 
-import com.vector.im.im.IMClient;
+import com.vector.im.im.IMLoginClient;
 
 /**
  * author: vector.huang
@@ -17,16 +17,11 @@ public class App {
     }
 
     public void create(){
-        try {
-            IMClient.instance().login("127.0.0.1",8080);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            System.out.println("连接失败了...");
-        }
+        IMLoginClient.instance().connect();
     }
 
     public void destroy(){
-        IMClient.instance().logout();
+
     }
 
 }

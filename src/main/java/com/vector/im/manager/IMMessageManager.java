@@ -3,11 +3,11 @@ package com.vector.im.manager;
 import com.vector.im.constant.ProtocolConstant;
 import com.vector.im.entity.Packet;
 import com.vector.im.im.IMClient;
+import com.vector.im.im.ThreadSocket;
 
 import java.nio.charset.Charset;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
 
 /**
  * author: vector.huang
