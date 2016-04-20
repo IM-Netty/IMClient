@@ -2,6 +2,7 @@ package com.vector.im.im;
 
 import com.vector.im.config.Config;
 import com.vector.im.manager.IMTestManager;
+import com.vector.im.manager.IMUserManager;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -41,6 +42,8 @@ public class IMClient {
         threadSocket.setOnChannelActiveListener(ctx -> {
             System.out.println("连接的业务服务器可以开始发送请求了");
             IMTestManager.testReq("Test");
+            IMUserManager.loginReq("黄廉温","1234567890");
+
         });
         threadSocket.connect(host, port);
     }

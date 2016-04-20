@@ -55,13 +55,14 @@ public class PacketChannelHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-
-
         //用户服务
         if(packet.getServiceId() == ProtocolConstant.SID_USER){
             switch (packet.getCommandId()){
-                case ProtocolConstant.CID_USER_INFO:
-                    IMUserManager.receiveUserInfo(packet.getBody());
+                case ProtocolConstant.CID_USER_LOGIN_RESP:
+                    IMUserManager.loginResp(packet.getBody());
+                    break;
+                case ProtocolConstant.CID_USER_ONLINE_RESP:
+                    IMUserManager.onlineUserResp(packet.getBody());
                     break;
             }
             return;
