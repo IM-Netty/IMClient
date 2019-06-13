@@ -1,1 +1,13 @@
-target
+# mac
+.DS_Store
+
+
+# 工程配置文件
+/.gradle
+/.idea
+*.iml
+
+# 编译文件
+/out
+/build
+/gen

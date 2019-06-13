@@ -6,7 +6,7 @@ package com.vector.im.config;
  */
 public interface Config {
 
-    String LOGIN_HOST = "192.168.199.210";
-    int LOGIN_PORT = 8090;
+    String LOGIN_HOST = "127.0.0.1";
+    int LOGIN_PORT = 8082;
 
 }

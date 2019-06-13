@@ -18,17 +18,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 public class PacketChannelHandler extends ChannelInboundHandlerAdapter {
 
 
-    private ThreadSocket.OnChannelActiveListener listener;
-
-    public PacketChannelHandler(ThreadSocket.OnChannelActiveListener listener) {
-        this.listener = listener;
-    }
-
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        if(listener != null){
-            listener.onChannelActive(ctx);
-        }
     }
 
     @Override

@@ -1,24 +1,16 @@
 package com.vector.im.im;
 
-import com.vector.im.handler.ByteToPacketCodec;
-import com.vector.im.handler.PacketChannelHandler;
-
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
+import com.vector.im.handler.CustomProtocolCodec;
+import com.vector.im.handler.LoginHandler;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
+import io.netty.handler.timeout.IdleStateHandler;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * author: vector.huang
@@ -41,9 +33,16 @@ public class ThreadSocket {
         boot.handler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024 * 1024, 0, 4, -4, 0, false));
-                ch.pipeline().addLast(new ByteToPacketCodec());
-                ch.pipeline().addLast(new PacketChannelHandler(listener));
+
+                ch.pipeline()
+                        //4.5分钟为写数据了，心就跳一下
+                        .addLast(new IdleStateHandler(0, 4 * 60 + 30, 0, TimeUnit.SECONDS))
+                        //读一帧的数据
+                        .addLast(new LengthFieldBasedFrameDecoder(1024 * 1024, 16, 4, 0, 0, true))
+                        //Protobuf 编解码
+                        .addLast(new CustomProtocolCodec())
+                        //消息处理
+                        .addLast(new LoginHandler());
             }
         });
         boot.option(ChannelOption.SO_KEEPALIVE, true);

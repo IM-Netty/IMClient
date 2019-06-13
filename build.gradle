@@ -1,0 +1,81 @@
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.8'
+    }
+}
+
+plugins {
+    id 'com.google.protobuf' version '0.8.8'
+    id 'java'
+}
+
+group 'com.version.im'
+version '1.0-SNAPSHOT'
+sourceCompatibility = 11
+
+repositories {
+    maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+    mavenCentral()
+    maven { url "https://repo.spring.io/milestone" }
+    maven { url "https://plugins.gradle.org/m2/" }
+}
+
+
+sourceSets {
+    gen{
+        java{
+        }
+    }
+    main {
+        proto {
+            // In addition to the default 'src/main/proto'
+            srcDir '../LoverIMServer/src/main/proto'
+        }
+        java {
+            srcDir 'src/main/java'
+            //自动生成的代码位置
+            srcDir 'gen/main/java'
+        }
+    }
+    test {
+        proto {
+            // In addition to the default 'src/test/proto'
+            srcDir 'src/test/proto'
+        }
+    }
+}
+
+
+dependencies {
+
+    implementation 'io.netty:netty-all:4.1.33.Final'
+
+    //IM 通信使用ProtoBuf
+    implementation 'com.google.protobuf:protobuf-java:3.7.1'
+    implementation 'commons-lang:commons-lang:2.6'
+
+    // java9 以后默认不加的模块 -- start
+    implementation('javax.xml.bind:jaxb-api')
+    implementation('com.sun.xml.bind:jaxb-impl:2.3.0')
+    implementation('org.glassfish.jaxb:jaxb-runtime:2.3.0')
+    implementation('javax.activation:activation:1.1.1')
+    // java9 以后默认不加的模块 -- end
+
+}
+
+
+protobuf {
+    protoc {
+        // The artifact spec for the Protobuf Compiler
+        // artifact = 'com.google.protobuf:protoc:3.7.1'
+        path = '/usr/local/bin/protoc'
+    }
+    generatedFilesBaseDir = "$projectDir/gen"
+}
+
+clean {
+    delete protobuf.generatedFilesBaseDir
+}
