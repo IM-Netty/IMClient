@@ -2,14 +2,12 @@ package com.vector.im;
 
 import com.vector.im.app.App;
 import com.vector.im.manager.IMMessageManager;
-import com.vector.im.manager.IMUserManager;
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
 
 /**
  * author: vector.huang
@@ -33,17 +31,17 @@ public class Boot extends Thread implements SignalHandler {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                 String content = reader.readLine();
-                String[] idContent = content.split("-");
+                String[] idContent = content.split("-", 2);
 
                 int exec = Integer.parseInt(idContent[0]);
-
                 switch (exec){
-                    case 0:
-                        IMUserManager.onlineUserReq(1);
+                    case 1:
+                        //发送消息
+                        String[] contents = idContent[1].split("-", 2);
+                        IMMessageManager.sendSingleMsgReq(Integer.parseInt(contents[0]), contents[1]);
                         break;
-
                     default:
-                        IMMessageManager.sendSingleMsgReq(exec, idContent[1]);
+                        System.out.println("不支持的操作");
                         break;
                 }
             } catch (Exception e) {

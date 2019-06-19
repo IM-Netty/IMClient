@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream;
  * @author: vector.huang
  * @date: 2019/06/11 09:26
  */
-public class IMMessage {
+public class IMHeader {
 
     //固定的 4*5=20
     public static final int HEAD_LENGTH = 20;
@@ -23,20 +23,20 @@ public class IMMessage {
     private byte[] body;
 
 
-    public IMMessage() {
+    public IMHeader() {
     }
 
-    public IMMessage(short serviceId, short commandId, byte[] body) {
+    public IMHeader(short serviceId, short commandId, byte[] body) {
         this.serviceId = serviceId;
         this.commandId = commandId;
         this.body = body;
     }
 
-    public static IMMessage parseFrom(byte[] bytes) {
+    public static IMHeader parseFrom(byte[] bytes) {
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
 
-        var msg = new IMMessage();
+        var msg = new IMHeader();
 
         readInt(inputStream);
         msg.setVersion(readInt(inputStream));

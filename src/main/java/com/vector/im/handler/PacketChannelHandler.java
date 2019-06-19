@@ -1,72 +1,37 @@
 package com.vector.im.handler;
 
-import com.vector.im.constant.ProtocolConstant;
-import com.vector.im.entity.Packet;
-import com.vector.im.im.ThreadSocket;
-import com.vector.im.manager.IMLoginManager;
+import com.vector.im.entity.IMHeader;
 import com.vector.im.manager.IMMessageManager;
-import com.vector.im.manager.IMTestManager;
-import com.vector.im.manager.IMUserManager;
-
+import com.vector.lover.proto.Packet;
+import com.vector.lover.proto.chat.Chat;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
+ * Channel 处理器
  * author: vector.huang
  * date：2016/4/18 19:25
  */
-public class PacketChannelHandler extends ChannelInboundHandlerAdapter {
-
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    }
+public class PacketChannelHandler extends SimpleChannelInboundHandler<IMHeader> {
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, IMHeader msg) throws Exception {
 
-        Packet packet = (Packet) msg;
+        if (msg.getServiceId() == Packet.ServiceId.CHAT_VALUE) {
 
-        //测试服务
-        if(packet.getServiceId() == ProtocolConstant.SID_TEST){
-            switch (packet.getCommandId()){
-                case ProtocolConstant.CID_TEST_TEST_REQ:
-                    IMTestManager.testResp(packet.getBody());
+            switch (msg.getCommandId()) {
+                case Chat.CommandId.CHAT_MSG_VALUE:
+                    //响应了
+                    IMMessageManager.msgResp(msg);
+                    break;
+                case Chat.CommandId.CHAT_MSG_OUT_VALUE:
+                    //发送消息过来了
+                    IMMessageManager.msgOut(msg);
+                    break;
+                default:
+                    System.out.println("无法处理的消息：" + msg.getServiceId() + "-" + msg.getCommandId());
                     break;
             }
-            return;
-        }
-
-        if(packet.getServiceId() == ProtocolConstant.SID_LOGIN){
-            switch (packet.getCommandId()){
-                case ProtocolConstant.CID_LOGIN_OUT:
-                    IMLoginManager.inIpPort(packet.getBody());
-                    break;
-            }
-            return;
-        }
-
-        //用户服务
-        if(packet.getServiceId() == ProtocolConstant.SID_USER){
-            switch (packet.getCommandId()){
-                case ProtocolConstant.CID_USER_LOGIN_RESP:
-                    IMUserManager.loginResp(packet.getBody());
-                    break;
-                case ProtocolConstant.CID_USER_ONLINE_RESP:
-                    IMUserManager.onlineUserResp(packet.getBody());
-                    break;
-            }
-            return;
-        }
-
-        //消息服务
-        if(packet.getServiceId() == ProtocolConstant.SID_MSG){
-            switch (packet.getCommandId()){
-                case ProtocolConstant.CID_MSG_RECEIVE_SINGLE_OUT:
-                    IMMessageManager.receiveMsgSingleOut(packet.getBody());
-                    break;
-            }
-            return;
         }
     }
 }

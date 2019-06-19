@@ -1,6 +1,6 @@
 package com.vector.im.app;
 
-import com.vector.im.im.IMLoginClient;
+import com.vector.im.im.IMClient;
 
 /**
  * author: vector.huang
@@ -17,7 +17,7 @@ public class App {
     }
 
     public void create(){
-        IMLoginClient.instance().connect();
+        IMClient.instance().connect();
     }
 
     public void destroy(){

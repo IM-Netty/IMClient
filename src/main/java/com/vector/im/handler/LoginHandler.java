@@ -1,6 +1,8 @@
 package com.vector.im.handler;
 
-import com.vector.im.entity.IMMessage;
+import com.vector.im.app.App;
+import com.vector.im.entity.IMHeader;
+import com.vector.im.im.IMClient;
 import com.vector.im.util.IMUtil;
 import com.vector.lover.proto.Packet;
 import com.vector.lover.proto.system.IMSystem;
@@ -11,7 +13,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * @author: vector.huang
  * @date: 2019/06/13 12:48
  */
-public class LoginHandler extends SimpleChannelInboundHandler<IMMessage> {
+public class LoginHandler extends SimpleChannelInboundHandler<IMHeader> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -21,7 +23,10 @@ public class LoginHandler extends SimpleChannelInboundHandler<IMMessage> {
 
         //连接成功，立马登录
         var login = IMSystem.LoginReq.newBuilder();
-        login.setToken("d00026c0-caf5-408b-8b9e-c1f713cd732d");
+        //1
+//        login.setToken("462e6819-9ca4-46d3-8e09-60e747113518");
+        //2
+        login.setToken("c3afbb71-4a66-44ec-bc79-af6dadfd96b2");
 
         var req = IMUtil.newHeader(Packet.ServiceId.SYSTEM, IMSystem.CommandId.SYSTEM_LOGIN, login);
         ctx.writeAndFlush(req);
@@ -34,7 +39,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<IMMessage> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, IMMessage msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, IMHeader msg) throws Exception {
 
         if (msg.getServiceId() == Packet.ServiceId.SYSTEM_VALUE
                 && msg.getServiceId() == IMSystem.CommandId.SYSTEM_LOGIN_VALUE) {
@@ -42,7 +47,9 @@ public class LoginHandler extends SimpleChannelInboundHandler<IMMessage> {
             var loginResp = IMSystem.LoginResp.parseFrom(msg.getBody());
             if (loginResp.getStatus() == Packet.Status.OK) {
                 //登录成功
-                System.out.println("登录成功");
+                System.out.println("登录成功：" + loginResp.getMaxMsgId());
+
+                IMClient.instance().setMaxMsgId(loginResp.getMaxMsgId());
 
                 ctx.pipeline().replace(this,"imHandler",new PacketChannelHandler());
 

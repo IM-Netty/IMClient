@@ -1,6 +1,6 @@
 package com.vector.im.handler;
 
-import com.vector.im.entity.IMMessage;
+import com.vector.im.entity.IMHeader;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
@@ -21,17 +21,17 @@ import java.util.List;
  * @author: vector.huang
  * @date: 2019/06/11 11:55
  */
-public class CustomProtocolCodec extends ByteToMessageCodec<IMMessage> {
+public class CustomProtocolCodec extends ByteToMessageCodec<IMHeader> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, IMMessage msg, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, IMHeader msg, ByteBuf out) throws Exception {
         //计算body length
         byte[] body = msg.getBody();
 
         //设置内容的长度
-        out.ensureWritable(IMMessage.HEAD_LENGTH + body.length);
+        out.ensureWritable(IMHeader.HEAD_LENGTH + body.length);
 
-        out.writeInt(IMMessage.HEAD_LENGTH);
+        out.writeInt(IMHeader.HEAD_LENGTH);
         out.writeInt(msg.getVersion());
         out.writeShort(msg.getServiceId());
         out.writeShort(msg.getCommandId());
@@ -43,7 +43,7 @@ public class CustomProtocolCodec extends ByteToMessageCodec<IMMessage> {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         //读取协议头
-        IMMessage message = new IMMessage();
+        IMHeader message = new IMHeader();
 
         //跳过头长度
         in.skipBytes(4);

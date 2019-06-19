@@ -1,9 +1,9 @@
 package com.vector.im.im;
 
-import com.vector.im.manager.IMTestManager;
-import com.vector.im.manager.IMUserManager;
+import com.vector.im.config.Config;
 import io.netty.channel.Channel;
 
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -13,12 +13,19 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class IMClient {
 
+    /**
+     * 客户端的版本号
+     */
+    public int version = 1;
+    /**
+     * 登录后的msgId
+     */
+    private AtomicLong maxMsgId;
+
     private static IMClient instance;
     private static Lock lock = new ReentrantLock();
 
-    private int userId;
     private ThreadSocket threadSocket;
-
     private IMClient() {
     }
 
@@ -34,15 +41,12 @@ public class IMClient {
         return instance;
     }
 
-    public void connect(String host, int port) {
+    public void connect() {
         threadSocket = new ThreadSocket();
         threadSocket.setOnChannelActiveListener(ctx -> {
             System.out.println("连接的业务服务器可以开始发送请求了");
-            IMTestManager.testReq("Test");
-            IMUserManager.loginReq("黄廉温", "1234567890");
-
         });
-        threadSocket.connect(host, port);
+        threadSocket.connect(Config.LOGIN_HOST, Config.LOGIN_PORT);
     }
 
     public void close() {
@@ -54,7 +58,20 @@ public class IMClient {
         return threadSocket.channel();
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    /**
+     * 获取下一个可用的msgId
+     * 例如，初始化为11，调用之后返回12
+     */
+    public long getUsableMsgId() {
+        return maxMsgId.incrementAndGet();
     }
+
+    public void setMaxMsgId(long usableMsgId) {
+        this.maxMsgId = new AtomicLong(usableMsgId);
+    }
+
+    public boolean isLogin() {
+        return maxMsgId != null;
+    }
+
 }

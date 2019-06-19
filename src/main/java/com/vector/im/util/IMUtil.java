@@ -3,7 +3,7 @@ package com.vector.im.util;
 import com.google.protobuf.Message;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.ProtocolMessageEnum;
-import com.vector.im.entity.IMMessage;
+import com.vector.im.entity.IMHeader;
 import com.vector.lover.proto.Packet;
 
 /**
@@ -20,9 +20,9 @@ public final class IMUtil {
      * @param messageOrBuilder 消息体
      * @return 新的Header
      */
-    public static IMMessage newHeader(Packet.ServiceId serviceId,
-                                      ProtocolMessageEnum commandId,
-                                      MessageOrBuilder messageOrBuilder) {
+    public static IMHeader newHeader(Packet.ServiceId serviceId,
+                                     ProtocolMessageEnum commandId,
+                                     MessageOrBuilder messageOrBuilder) {
 
         Message message;
         if (messageOrBuilder instanceof Message) {
@@ -30,7 +30,7 @@ public final class IMUtil {
         } else {
             message = ((Message.Builder) messageOrBuilder).build();
         }
-        var msg = new IMMessage((short) serviceId.getNumber(),
+        var msg = new IMHeader((short) serviceId.getNumber(),
                 (short) commandId.getNumber(),
                 message.toByteArray());
         return msg;
@@ -43,8 +43,8 @@ public final class IMUtil {
      * @param messageOrBuilder 消息体
      * @return 新的Header
      */
-    public static IMMessage copyHeader(IMMessage srcHeader,
-                                       MessageOrBuilder messageOrBuilder) {
+    public static IMHeader copyHeader(IMHeader srcHeader,
+                                      MessageOrBuilder messageOrBuilder) {
 
         Message message;
         if (messageOrBuilder instanceof Message) {
@@ -52,7 +52,7 @@ public final class IMUtil {
         } else {
             message = ((Message.Builder) messageOrBuilder).build();
         }
-        var msg = new IMMessage(srcHeader.getServiceId(),
+        var msg = new IMHeader(srcHeader.getServiceId(),
                 srcHeader.getCommandId(),
                 message.toByteArray());
         msg.setVersion(srcHeader.getVersion());
