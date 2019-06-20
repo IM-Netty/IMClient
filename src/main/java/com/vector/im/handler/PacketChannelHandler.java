@@ -1,9 +1,11 @@
 package com.vector.im.handler;
 
 import com.vector.im.entity.IMHeader;
+import com.vector.im.im.IMClient;
 import com.vector.im.manager.IMMessageManager;
 import com.vector.lover.proto.Packet;
 import com.vector.lover.proto.chat.Chat;
+import com.vector.lover.proto.system.IMSystem;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -17,6 +19,18 @@ public class PacketChannelHandler extends SimpleChannelInboundHandler<IMHeader> 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, IMHeader msg) throws Exception {
 
+        if (msg.getServiceId() == Packet.ServiceId.SYSTEM_VALUE) {
+            switch (msg.getCommandId()) {
+                case IMSystem.CommandId.SYSTEM_LOGOUT_VALUE:
+                    //退出登录了
+                    IMClient.instance().setMaxMsgId(null);
+                    var logout = IMSystem.LogoutOut.parseFrom(msg.getBody());
+                    System.out.println("退出登录了：" + logout.getStatus());
+                    break;
+                default:
+                    break;
+            }
+        }
         if (msg.getServiceId() == Packet.ServiceId.CHAT_VALUE) {
 
             switch (msg.getCommandId()) {

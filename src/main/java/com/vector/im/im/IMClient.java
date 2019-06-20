@@ -66,8 +66,12 @@ public class IMClient {
         return maxMsgId.incrementAndGet();
     }
 
-    public void setMaxMsgId(long usableMsgId) {
-        this.maxMsgId = new AtomicLong(usableMsgId);
+    public void setMaxMsgId(Long usableMsgId) {
+        if (usableMsgId == null) {
+            maxMsgId = null;
+            return;
+        }
+        maxMsgId = new AtomicLong(usableMsgId);
     }
 
     public boolean isLogin() {
